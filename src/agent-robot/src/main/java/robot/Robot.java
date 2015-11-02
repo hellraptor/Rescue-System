@@ -44,19 +44,16 @@ public class Robot implements Pluggable {
         this.communicationModule = communicationModule;
     }
 
-    @Override
     public void on() {
         System.out.println(String.format("Robot %1d on", getId()));
     }
 
-    @Override
     public void off() {
         System.out.println(String.format("Robot %1d off", getId()));
         System.exit(0);
 
     }
 
-    @Override
     public void status() {
 
     }
