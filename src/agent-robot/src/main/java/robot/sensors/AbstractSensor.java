@@ -5,9 +5,7 @@ import robot.Pluggable;
 /**
  * Created by svyatoslav_yakovlev on 11/1/2015.
  */
-public abstract class AbstractSensor<T> extends Thread implements Pluggable {
-
-    public abstract T getData();
+public abstract class AbstractSensor implements Pluggable {
 
     private boolean on;
 
