@@ -1,20 +1,22 @@
 package hello;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hello.beans.SimpleMessage;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
+
+import java.io.IOException;
 
 @WebSocket
 public class EchoSocket {
     private static final Logger LOG = Log.getLogger(EchoSocket.class);
     private Session session;
     private RemoteEndpoint remote;
+
+    ComandAnaliser comandAnaliser = ComandAnaliser.getInstance();
 
     @OnWebSocketClose
     public void onWebSocketClose(int statusCode, String reason) {
@@ -40,7 +42,21 @@ public class EchoSocket {
     public void onWebSocketText(String message) {
         if (this.session != null && this.session.isOpen() && this.remote != null) {
             LOG.info("Echoing back text message [{}]", message);
-            this.remote.sendStringByFuture(message);
+
+            ObjectMapper mapper = new ObjectMapper();
+            SimpleMessage simpleMessage = null;
+            try {
+                simpleMessage = mapper.readValue(message, SimpleMessage.class);
+
+                String command = simpleMessage.getCommand();
+                if (command.equals("start")) {
+
+                }
+                comandAnaliser.methodOne();
+                this.remote.sendStringByFuture(simpleMessage.getCommand());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
