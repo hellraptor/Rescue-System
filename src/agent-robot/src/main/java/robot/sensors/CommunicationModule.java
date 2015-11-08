@@ -5,7 +5,6 @@ import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 public class CommunicationModule extends AbstractSensor {
 
@@ -16,7 +15,6 @@ public class CommunicationModule extends AbstractSensor {
         setOn(true);
         String destUri = "ws://localhost:8089/echo";
         init(destUri);
-        sendMessage("привет");
         System.out.println("Communication module is on");
     }
 
@@ -29,14 +27,12 @@ public class CommunicationModule extends AbstractSensor {
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             client.connect(socket, echoUri, request);
             System.out.printf("Connecting to : %s%n", echoUri);
-            socket.awaitClose(5, TimeUnit.SECONDS);
-
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    private void sendMessage(String msg) {
+    public void sendMessage(String msg) {
         socket.sendMessage(msg);
     }
 

@@ -13,6 +13,7 @@
     <modules>
         <module>server-environment</module>
         <module>agent-robot</module>
+        <module>utils</module>
     </modules>
 
     <properties>

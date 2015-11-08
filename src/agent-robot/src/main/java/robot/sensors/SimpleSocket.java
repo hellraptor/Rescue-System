@@ -38,17 +38,10 @@ public class SimpleSocket {
     }
 
     @OnWebSocketConnect
-    public void onConnect(Session session) {
+    public void onConnect(Session session) throws InterruptedException {
         System.out.printf("Got connect: %s%n", session);
         this.session = session;
-        try {
-            Future<Void> fut;
-            fut = session.getRemote().sendStringByFuture("getid");
-            fut.get(2, TimeUnit.SECONDS);
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        Thread.sleep(2000);
     }
 
     @OnWebSocketMessage

@@ -1,7 +1,7 @@
 package robot;
 
 import robot.sensors.Lidar;
-import robot.utils.RoboStatus;
+import utils.AgentStatus;
 
 public class RobotWithLidar extends Robot {
 
@@ -24,7 +24,7 @@ public class RobotWithLidar extends Robot {
     @Override
     public void on() {
         System.out.println("Initializing...");
-        setRoboStatus(RoboStatus.ON);
+        setStatus(AgentStatus.ON);
         getCommunicationModule().on();
         getLidar().on();
         System.out.println(this.getClass().getName().concat(" is on"));

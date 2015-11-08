@@ -1,12 +1,15 @@
 package hello;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.beans.SimpleMessage;
+import hello.beans.AgentRepresentation;
+import hello.utils.commands.AgentDispatcher;
+import hello.utils.commands.CommandDispatcher;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import utils.AgentCommands;
+import utils.Commands.SimpleMessage;
 
 import java.io.IOException;
 
@@ -16,7 +19,8 @@ public class EchoSocket {
     private Session session;
     private RemoteEndpoint remote;
 
-    ComandAnaliser comandAnaliser = ComandAnaliser.getInstance();
+    CommandDispatcher commandDispatcher = CommandDispatcher.getInstance();
+    private AgentDispatcher agentDispatcher = AgentDispatcher.getInstance();
 
     @OnWebSocketClose
     public void onWebSocketClose(int statusCode, String reason) {
@@ -42,19 +46,15 @@ public class EchoSocket {
     public void onWebSocketText(String message) {
         if (this.session != null && this.session.isOpen() && this.remote != null) {
             LOG.info("Echoing back text message [{}]", message);
-
-            ObjectMapper mapper = new ObjectMapper();
-            SimpleMessage simpleMessage = null;
             try {
-                simpleMessage = mapper.readValue(message, SimpleMessage.class);
-
-                String command = simpleMessage.getCommand();
-                if (command.equals("start")) {
-
+                SimpleMessage simpleMessage = commandDispatcher.parseCommand(message);
+                if (AgentCommands.START.equals(simpleMessage.getCommand())) {
+                    AgentRepresentation agent = agentDispatcher.addNewAgent(session);
+                    this.remote.sendStringByFuture(commandDispatcher.generateCommand(AgentCommands.START, agent.getId()));
                 }
-                comandAnaliser.methodOne();
-                this.remote.sendStringByFuture(simpleMessage.getCommand());
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

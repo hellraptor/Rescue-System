@@ -1,8 +1,12 @@
 package robot;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import robot.sensors.CommunicationModule;
-import robot.utils.RoboStatus;
+import utils.AgentCommands;
+import utils.AgentStatus;
+import utils.Commands.SimpleMessage;
 
 public class Robot implements Pluggable {
 
@@ -11,21 +15,20 @@ public class Robot implements Pluggable {
     /**
      * if id ==-1 then robot not authorized in system
      */
-    private int id;
+    private int id = -1;
 
-    private RoboStatus roboStatus;
+    private AgentStatus status;
 
     public Robot() {
         communicationModule = new CommunicationModule();
-        id = -1;
     }
 
-    public RoboStatus getRoboStatus() {
-        return roboStatus;
+    public AgentStatus getStatus() {
+        return status;
     }
 
-    public void setRoboStatus(RoboStatus roboStatus) {
-        this.roboStatus = roboStatus;
+    public void setStatus(AgentStatus status) {
+        this.status = status;
     }
 
     public int getId() {
@@ -56,5 +59,11 @@ public class Robot implements Pluggable {
 
     public void status() {
 
+    }
+
+    public void authInSystem() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleMessage message = new SimpleMessage(AgentCommands.START, getId());
+        communicationModule.sendMessage(mapper.writeValueAsString(message));
     }
 }
